@@ -67,6 +67,13 @@ return [
 	'LR'=>'Liste des reservations',
 	'Phone' => 'Téléphone ',
 	'Email' => 'Email ',
+	'from_adr' =>'Adresse de départ',
+	'to_adr' => 'Adresse d\'arrivée',
+	'user' =>'utilisateur',
+	'User' =>'Utilisateur',
+	'Users' =>'Utilisateurs',
+	'LU' => 'List des Utilisateurs'
+
 
 
 

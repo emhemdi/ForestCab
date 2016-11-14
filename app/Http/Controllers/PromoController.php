@@ -56,7 +56,14 @@ class PromoController extends Controller {
 	{
 		try
 		{
-			
+			$this->validate($request, [
+			 	'start_date' => 'required',
+			 	'end_date' => 'required',
+			 	'name' => 'required',
+			 	'promo_description' => 'required',
+			 	'percent' => 'required|integer'
+		    ]);
+
 			$start_date = date_create_from_format('d-m-Y H:i', $request->get('start_date'));
 			$end_date = date_create_from_format('d-m-Y H:i', $request->get('end_date'));
 			$promo=new ParseObject("Promo");
@@ -118,6 +125,13 @@ class PromoController extends Controller {
 	{
 		try
 		{
+			$this->validate($request, [
+			 	'start_date' => 'required',
+			 	'end_date' => 'required',
+			 	'name' => 'required',
+			 	'promo_description' => 'required',
+			 	'percent' => 'required|integer'
+		    ]);
 			$start_date = date_create_from_format('d-m-Y H:i', $request->get('start_date'));
 			$end_date = date_create_from_format('d-m-Y H:i', $request->get('end_date'));
 			$promos = new ParseQuery("Promo");

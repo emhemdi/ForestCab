@@ -29,8 +29,8 @@ class ReservationController extends Controller {
 		  //dd($reservations);
 		  return view('reservation/index',compact('reservations'));
 		} catch (ParseException $ex) {
-		   throw new Exception('Failed to retrive list reservation, with error message: ' + $ex->getMessage());
-		   
+			echo($ex);
+			return back();
 		}
 		
 	}
@@ -50,12 +50,10 @@ class ReservationController extends Controller {
 		  	$drivers =  $query->find();
 		  	$ranges = $query1->find();
 		  	$users = $query2->find();
-		  	$data = array('drivers' => $drivers,
-		  								'users' => $users,
-		  								'ranges' => $ranges );
-			return view('reservation/create', compact('data'));
+			return view('reservation/create',compact('users','drivers','ranges'));
 		} catch (ParseException $ex) {
-		   throw new Exception('Failed to load drivers, with error message: ' + $ex->getMessage());
+			echo($ex);
+			return back();
 		}
 	}
 
@@ -71,26 +69,21 @@ class ReservationController extends Controller {
 
 			 $this->validate($request, [
 			 	'from_adr' => 'required',
+			 	'start_date' => 'required',
+			 	'driver' => 'required',
+			 	'user' => 'required',
+			 	'range' => 'required'
 		    ]);
             
-			$fromAdr = new ParseObject("Adress");
-			$fromAdr->set("name",$request->get("from_adr"));
-			$fromAdr->save();
-
-			
-
 			$reservation = ParseObject::create("Reservation");
 			$reservation->set("range",new ParseObject('Range',$request->get("range")));
 			$reservation->set("driver",new ParseObject('Driver',$request->get("driver")));
-			//$reservation->set("user",$request->get("user"));
-			/*if( $request->get('date') != NULL )
-			{	
-				$date = date_create_from_format('d-m-Y H:i', $request->get('date'));
-				$reservation->set("date",$date);
-			}*/
+			$reservation->set("user",new ParseObject('_User',$request->get("user")));
+			
 			$reservation->set("start_date", date_create_from_format('d-m-Y H:i', $request->get('start_date')));
 			if($request->get("periode_reservation") != NULL) {
 				$reservation->set("end_date", date_create_from_format('d-m-Y H:i', $request->get('end_date')));
+				$reservation->set("isPeriode",true);
 			}
 			else
 			{
@@ -98,7 +91,12 @@ class ReservationController extends Controller {
 				$toAdr->set("name",$request->get("to_adr"));
 				$toAdr->save();
 				$reservation->set("to_adr",$toAdr);
+				$reservation->set("isPeriode",false);
 			}
+			$fromAdr = new ParseObject("Adress");
+			$fromAdr->set("name",$request->get("from_adr"));
+			$fromAdr->save();
+
 			$reservation->set("from_adr",$fromAdr);
 			
 			//$reservation->set("promos",$request->get("promos"));
@@ -106,8 +104,8 @@ class ReservationController extends Controller {
 			$reservation->save();
 			return redirect('/reservations/');
 		} catch (ParseException $ex) {
-			dd($ex);
-		   throw new Exception('Failed to create new reservation, with error message: ' + $ex->getMessage());
+			echo($ex);
+			return back();
 		}
 	}
 
@@ -130,7 +128,21 @@ class ReservationController extends Controller {
 	 */
 	public function edit($id)
 	{
-		return view('reservation/edit');
+
+		try {
+			$queryReservation = new ParseQuery("Reservation");
+			$query = new ParseQuery("Driver");
+			$query1 = new ParseQuery("Range");
+			$query2 = new ParseQuery("_User");
+			$reservation = $queryReservation->get($id);
+		  	$drivers =  $query->find();
+		  	$ranges = $query1->find();
+		  	$users = $query2->find();
+			return view('reservation/edit',compact('reservation','users','drivers','ranges'));
+		} catch (ParseException $ex) {
+			echo($ex);
+			return back();
+		}
 	}
 
 	/**
@@ -141,25 +153,47 @@ class ReservationController extends Controller {
 	 */
 	public function update(Request $request)
 	{
-		$query = new ParseQuery("Reservation");
 		try {
+			 $regex = "/^(?=.+)(?:[1-9]\d*|0)?(?:\.\d+)?$/";
+
+			 $this->validate($request, [
+			 	'from_adr' => 'required',
+			 	'start_date' => 'required',
+			 	'driver' => 'required',
+			 	'user' => 'required',
+			 	'range' => 'required'
+		    ]);
+            
+			$fromAdr = new ParseObject("Adress");
+			$fromAdr->set("name",$request->get("from_adr"));
+			$fromAdr->save();
+
+			$query = new ParseQuery("Reservation");
+			$reservation = $query->get($request->get("id"));
+			$reservation->set("range",new ParseObject('Range',$request->get("range")));
+			$reservation->set("driver",new ParseObject('Driver',$request->get("driver")));
+			$reservation->set("user",new ParseObject('_User',$request->get("user")));
 			
-			$start_date = date_create_from_format('d-m-Y H:i', $request->get('start_date'));
-            $end_date = date_create_from_format('d-m-Y H:i', $request->get('end_date'));
-		  	$reservation = ParseObject::create("Reservation");
-			$reservation->set("range",$request->get("range"));
-			//$reservation->set("user",$request->get("user"));
-			$reservation->set("date",$request->get("date"));
-			$reservation->set("start_date",$start_date);
-			$reservation->set("end_date",$end_date);
-			$reservation->set("from_adr",$request->get("from_adr"));
-			$reservation->set("to_adr",$request->get("to_adr"));
-			$reservation->set("price",$request->get("price"));
-			//$reservation->set("promos",$request->get("promos"));
+			$reservation->set("start_date", date_create_from_format('d-m-Y H:i', $request->get('start_date')));
+			if($request->get("periode_reservation") != NULL) {
+				$reservation->set("end_date", date_create_from_format('d-m-Y H:i', $request->get('end_date')));
+				$reservation->set("isPeriode",true);
+			}
+			else
+			{
+				$toAdr = new ParseObject("Adress");
+				$toAdr->set("name",$request->get("to_adr"));
+				$toAdr->save();
+				$reservation->set("to_adr",$toAdr);
+				$reservation->set("isPeriode",false);
+			}
+			$reservation->set("from_adr",$fromAdr);
 			
 			$reservation->save();
+			return redirect('/reservations/');
 		} catch (ParseException $ex) {
-		   throw new Exception('Failed to update reservation, with error message: ' + $ex->getMessage());
+			dd($ex);
+			return back();
 		}
 	}
 	/**
@@ -175,7 +209,8 @@ class ReservationController extends Controller {
 		  	$reservation = $query->get($id);
 			$reservation->destroy();
 		} catch (ParseException $ex) {
-		   throw new Exception('Failed to delete reservation, with error message: ' + $ex->getMessage());
+			echo($ex);
+			return back();
 		}
 		return back();
 	}

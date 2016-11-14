@@ -49,6 +49,10 @@ class OptionController extends Controller {
 	{
 		try
 		{
+			$this->validate($request, [
+			 	'option_description' => 'required',
+			 	'name' => 'required'
+		    ]);
 			$option=new ParseObject("Option");
 			$option->set("option_description",$request->get('option_description'));
 			$option->set("name",$request->get('name'));
@@ -95,6 +99,10 @@ class OptionController extends Controller {
 	{
 		try
 		{
+			$this->validate($request, [
+			 	'option_description' => 'required',
+			 	'name' => 'required'
+		    ]);
 			$options = new ParseQuery("Option");
 			$option = $options->get($request->input('id'));
 			$option->set("option_description",$request->input('option_description'));

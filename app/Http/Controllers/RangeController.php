@@ -71,7 +71,10 @@ class RangeController extends Controller {
 		try
 		{
 			
-			
+			$this->validate($request, [
+			 	'name' => 'required',
+			 	'range_description' => 'required',
+		    ]);
 			
 			$range=ParseObject::create("Range");
 			$range->set("name",$request->get('name'));
@@ -141,6 +144,10 @@ class RangeController extends Controller {
 	{
 		try
 		{
+			$this->validate($request, [
+			 	'name' => 'required',
+			 	'range_description' => 'required',
+		    ]);
 			$ranges = new ParseQuery("Range");
 			$range = $ranges->get($id);
 			$query = new ParseQuery("Option");

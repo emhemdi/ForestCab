@@ -49,6 +49,12 @@ class DriverController extends Controller {
 	{
 		try
 		{
+
+			 $this->validate($request, [
+			 	'phone' => 'required',
+			 	'email' => 'required|email',
+			 	'number' => 'required'
+		    ]);
 			$driver=new ParseObject("Driver");
 			$driver->set("phone",$request->get('phone'));
 			$driver->set("name",$request->get('name'));
@@ -96,6 +102,11 @@ class DriverController extends Controller {
 	{
 		try
 		{
+			$this->validate($request, [
+			 	'phone' => 'required',
+			 	'email' => 'required|email',
+			 	'number' => 'required'
+		    ]);
 			$drivers = new ParseQuery("Driver");
 			$driver = $drivers->get($request->input('id'));
 			$driver->set("phone",$request->get('phone'));
