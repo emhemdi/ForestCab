@@ -17,6 +17,8 @@
     <!-- Styles -->
     <link href="/css/app.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ URL::to('assets/stylesheets/styles.css') }}">
+    
+     
 
 
     <!-- Scripts -->
