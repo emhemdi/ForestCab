@@ -83,6 +83,10 @@ Route::get('/documentation', function()
 {
 	return View::make('documentation');
 });
+Route::get('/app/cars', function()
+{
+	return View::make('car/index');
+});
 
 Route::get('/cars', 'CarController@index');
 Route::get('/cars/delete/{id}','CarController@destroy');

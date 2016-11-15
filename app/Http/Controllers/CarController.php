@@ -1,5 +1,5 @@
 <?php namespace App\Http\Controllers;
-
+use App\User;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -27,7 +27,18 @@ class CarController extends Controller {
 	{
 		$query = new ParseQuery("Car");
 		$cars = $query->find();
-		return view('car/index' , compact('cars'));
+
+		//return view('car/index' , compact('cars'));
+		//dd($cars);
+		//dd(json_encode($cars));
+		foreach ($cars as $car) {
+    
+    $response[] = json_decode($car->_encode());
+}
+
+		//return(User::all());
+		return($response);
+//return($cars[0]->_encode());
 	}
 
 	/**
