@@ -1,7 +1,9 @@
+
+@extends('app')
 @extends ('layouts.dashboard')
 @section('page_heading', trans('forestCab.Add').trans('forestCab.reservation'))
 @section('section')
-
+<div class="container" ng-app="todoApp" ng-controller="todoController">
 <div class="col-lg-6">
         <form role="form" method="POST" action="/reservations/store">
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -84,6 +86,7 @@
         @endif
 
     </div>
+ </div>   
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlYE05bT9nZhSa20LL8my5B4jizyA3cGU&signed_in=true&libraries=places&callback=initAutocomplete"
         async defer></script>

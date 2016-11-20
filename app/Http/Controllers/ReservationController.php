@@ -25,9 +25,12 @@ class ReservationController extends Controller {
 			$query->includeKey("driver");
 			$query->includeKey("range");
 			$query->includeKey("user");
-		  $reservations = $query->find();
-		  //dd($reservations);
-		  return view('reservation/index',compact('reservations'));
+		  	$data = $query->find();
+		  	foreach ($data as $reservation) { 
+		  		$reservations[] =json_decode($reservation->_encode());
+		  	}
+		  	return $reservations;
+		  //return view('reservation/index',compact('reservations'));
 		} catch (ParseException $ex) {
 			echo($ex);
 			return back();
@@ -47,10 +50,20 @@ class ReservationController extends Controller {
 		$query1 = new ParseQuery("Range");
 		$query2 = new ParseQuery("_User");;
 		try {
-		  	$drivers =  $query->find();
-		  	$ranges = $query1->find();
-		  	$users = $query2->find();
-			return view('reservation/create',compact('users','drivers','ranges'));
+		  	$driversdata =  $query->find();
+		  	$rangesdata = $query1->find();
+		  	$usersdata = $query2->find();
+		  	foreach ($driversdata as $driver) { 
+		  		$drivers[] =json_decode($driver->_encode());
+		  	}
+		  	foreach ($rangesdata as $range) { 
+		  		$ranges[] =json_decode($range->_encode());
+		  	}
+		  	foreach ($usersdata as $user) { 
+		  		$users[] =json_decode($user->_encode());
+		  	}
+			//return view('reservation/create',compact('users','drivers','ranges'));
+			return compact('users','drivers','ranges');
 		} catch (ParseException $ex) {
 			echo($ex);
 			return back();
@@ -76,9 +89,9 @@ class ReservationController extends Controller {
 		    ]);
             
 			$reservation = ParseObject::create("Reservation");
-			$reservation->set("range",new ParseObject('Range',$request->get("range")));
-			$reservation->set("driver",new ParseObject('Driver',$request->get("driver")));
-			$reservation->set("user",new ParseObject('_User',$request->get("user")));
+			$reservation->set("range",new ParseObject('Range',$request->get("range.objectId")));
+			//$reservation->set("driver",new ParseObject('Driver',$request->get("driver")));
+			//$reservation->set("user",new ParseObject('_User',$request->get("user")));
 			
 			$reservation->set("start_date", date_create_from_format('d-m-Y H:i', $request->get('start_date')));
 			if($request->get("periode_reservation") != NULL) {
@@ -101,11 +114,10 @@ class ReservationController extends Controller {
 			
 			//$reservation->set("promos",$request->get("promos"));
 			
-			$reservation->save();
-			return redirect('/reservations/');
+			return $reservation->save();
 		} catch (ParseException $ex) {
-			echo($ex);
-			return back();
+			dd($ex);
+			return $ex;
 		}
 	}
 
@@ -131,14 +143,34 @@ class ReservationController extends Controller {
 
 		try {
 			$queryReservation = new ParseQuery("Reservation");
+			$queryReservation->includeKey("from_adr");
+			$queryReservation->includeKey("to_adr");
+			//$queryReservation->includeKey("driver");
+			//$queryReservation->includeKey("user");
+			//$queryReservation->includeKey("range");
+
+
 			$query = new ParseQuery("Driver");
 			$query1 = new ParseQuery("Range");
 			$query2 = new ParseQuery("_User");
 			$reservation = $queryReservation->get($id);
-		  	$drivers =  $query->find();
-		  	$ranges = $query1->find();
-		  	$users = $query2->find();
-			return view('reservation/edit',compact('reservation','users','drivers','ranges'));
+		  	$driversdata =  $query->find();
+		  	$rangesdata = $query1->find();
+		  	$usersdata = $query2->find();
+		  	$reservation->from_adr = json_decode($reservation->from_adr->_encode());
+		  	if ($reservation->to_adr != null) 
+		  		$reservation->to_adr = json_decode($reservation->to_adr->_encode());
+		  	$reservation = json_decode($reservation->_encode());
+		  	foreach ($driversdata as $driver) { 
+		  		$drivers[] =json_decode($driver->_encode());
+		  	}
+		  	foreach ($rangesdata as $range) { 
+		  		$ranges[] =json_decode($range->_encode());
+		  	}
+		  	foreach ($usersdata as $user) { 
+		  		$users[] =json_decode($user->_encode());
+		  	}
+			return compact('reservation','users','drivers','ranges');
 		} catch (ParseException $ex) {
 			echo($ex);
 			return back();
@@ -188,9 +220,9 @@ class ReservationController extends Controller {
 				$reservation->set("isPeriode",false);
 			}
 			$reservation->set("from_adr",$fromAdr);
-			
-			$reservation->save();
-			return redirect('/reservations/');
+			dd($reservation->save());
+			return $reservation->save();
+			//return redirect('/reservations/');
 		} catch (ParseException $ex) {
 			dd($ex);
 			return back();

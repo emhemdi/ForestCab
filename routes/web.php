@@ -124,13 +124,13 @@ Route::get('/ranges/{id}/show', 'RangeController@show');
 
 
 
-Route::get('/reservations', 'ReservationController@index');
-Route::get('/reservations/{id}/delete/','ReservationController@destroy');
-Route::get('/reservations/{id}/edit/','ReservationController@edit');
+//Route::get('/reservations', 'ReservationController@index');
+//Route::get('/reservations/{id}/delete/','ReservationController@destroy');
+//Route::get('/reservations/{id}/edit/','ReservationController@edit');
 Route::get('/reservations/update', 'ReservationController@update');
 Route::get('/reservations/create', 'ReservationController@create');
 Route::post('/reservations/store', 'ReservationController@store');
-Route::get('/reservations/{id}/show/', 'PromoController@show');
+//Route::get('/reservations/{id}/show/', 'PromoController@show');
 
 Route::get('/test', function()
 {
@@ -140,3 +140,12 @@ Route::get('/test', function()
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
+
+Route::get('/reservations/', 'ReservationController@index');
+//Route::post('/api/reservations/store/', 'ReservationController@store');
+//Route::post('/api/reservations/{id}', 'ReservationController@update');
+Route::delete('/api/reservations/{id}', 'ReservationController@destroy');
+Route::get('/api/reservations/',  function()
+{
+	return View::make('reservation/index');
+});

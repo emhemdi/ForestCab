@@ -12,7 +12,7 @@
     <meta content="" name="description"/>
     <meta content="" name="author"/>
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'ForestCab') }}</title>
 
     <!-- Styles -->
     <link href="/css/app.css" rel="stylesheet">
@@ -35,9 +35,6 @@
     <!-- Scripts -->
 
     <script type="text/javascript" src="{{ URL::to('assets/scripts/frontend.js') }}"></script> 
-
-    
-    
 
 </body>
 </html>

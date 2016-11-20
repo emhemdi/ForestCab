@@ -1,2 +1,2 @@
-var app = angular.module('ForestCab', [])
+var app = angular.module('ForestCab', ['ui.bootstrap.datetimepicker'])
         .constant('API_URL', 'http://localhost:8000/');
