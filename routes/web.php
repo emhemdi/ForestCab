@@ -83,13 +83,15 @@ Route::get('/documentation', function()
 {
 	return View::make('documentation');
 });
+Route::get('/app/cars', function()
+{
+	return View::make('car/index');
+});
 
-Route::get('/cars', 'CarController@index');
-Route::get('/cars/delete/{id}','CarController@destroy');
-Route::get('/cars/edit/{id}','CarController@edit');
-Route::get('/cars/update', 'CarController@update');
-Route::get('/cars/create', 'CarController@create');
-Route::get('/cars/store', 'CarController@store');
+Route::get('/cars/{id?}', 'CarController@index');
+Route::delete('/cars/{id}','CarController@destroy');
+Route::post('/cars/{id}', 'CarController@update');
+Route::post('/cars', 'CarController@store');
 
 Route::get('/options', 'OptionController@index');
 Route::get('/options/{id}/delete','OptionController@destroy');

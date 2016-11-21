@@ -1,4 +1,7 @@
 app.controller('carController', function($scope, $http, API_URL) {
-    $scope.test="ok";
+    $http.get(API_URL + "cars")
+            .success(function(response) {
+                $scope.cars = response;
+            });
    
 });

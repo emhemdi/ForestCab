@@ -1,7 +1,10 @@
 var app = angular.module('ForestCab', ['ui.bootstrap.datetimepicker'])
         .constant('API_URL', 'http://localhost:8000/');
 app.controller('carController', function($scope, $http, API_URL) {
-    $scope.test="ok";
+    $http.get(API_URL + "cars")
+            .success(function(response) {
+                $scope.cars = response;
+            });
    
 });
 app.controller('reservationController', function($scope, $http, API_URL) {

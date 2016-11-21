@@ -1,20 +1,12 @@
 <?php namespace App\Http\Controllers;
-
+use App\User;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use Parse\ParseObject;
 use Parse\ParseQuery;
-use Parse\ParseACL;
-use Parse\ParsePush;
-use Parse\ParseUser;
-use Parse\ParseInstallation;
-use Parse\ParseException;
-use Parse\ParseAnalytics;
-use Parse\ParseFile;
-use Parse\ParseCloud;
-use Parse\ParseClient;
+
 
 class CarController extends Controller {
 
@@ -23,11 +15,32 @@ class CarController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function index($id = null)
 	{
-		$query = new ParseQuery("Car");
-		$cars = $query->find();
-		return view('car/index' , compact('cars'));
+		if ($id == null)
+		{
+			$query = new ParseQuery("Car");
+			$cars = $query->find();
+
+			//return view('car/index' , compact('cars'));
+			//dd($cars);
+			//dd(json_encode($cars));
+			foreach ($cars as $car) 
+			{
+    
+    			$response[] = json_decode($car->_encode());
+			}
+
+		
+			return($response);
+
+		}
+		else
+		{
+			$cars = new ParseQuery("Car");
+			$car = $cars->get($id);
+			return $car->_encode();
+		}
 	}
 
 	/**
@@ -58,12 +71,13 @@ class CarController extends Controller {
 			$car->set("car_description",$request->get('car_description'));
 			$car->set("model",$request->get('model'));
 			$car->save();
+			 return 'Employee record successfully created';
 		}
 		catch(ParseException $ex)
 		{
 
 	 	}
-	 	return back();
+	 	
 	}
 
 	/**
@@ -105,9 +119,9 @@ class CarController extends Controller {
 			 	'model' => 'required'
 		    ]);
 			$cars = new ParseQuery("Car");
-			$car = $cars->get($request->input('id'));
-			$car->set("car_description",$request->input('car_description'));
-			$car->set("model",$request->input('model'));
+			$car = $cars->get($request->get('objectId'));
+			$car->set("car_description",$request->get('car_description'));
+			$car->set("model",$request->get('model'));
 			$car->save();
 
 
@@ -135,6 +149,7 @@ class CarController extends Controller {
 			$cars = new ParseQuery("Car");
 			$car = $cars->get($id);
 			$car->destroy();
+			return "Car successfully deleted ";
 		}
 		catch(ParseException $ex){
 			echo $ex;
